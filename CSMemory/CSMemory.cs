@@ -25,16 +25,15 @@ namespace CSMemory
         [DllImport("kernel32.dll", SetLastError = true, EntryPoint = "OpenProcess")]
         public static extern IntPtr OpenProcess(ProcessAccessFlags access, bool inheritHandle, int procId);
 
-        public static unsafe IntPtr GetProcessHandle(string processName)
+        public static IntPtr GetProcessHandle(string processName)
         {
-            int procId = 0;
-            foreach (var p in Process.GetProcessesByName(processName))
+            foreach (var process in Process.GetProcessesByName(processName))
             {
-                procId = p.Id;
+                IntPtr handle = OpenProcess(ProcessAccessFlags.All, false, process.Id);
+                return handle;
             }
 
-            IntPtr handle = OpenProcess(ProcessAccessFlags.All, false, procId);
-            return handle;
+            return IntPtr.Zero;
         }
     }
 }
