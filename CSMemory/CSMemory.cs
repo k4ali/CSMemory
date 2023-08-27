@@ -26,6 +26,8 @@ namespace CSMemory
         private static extern IntPtr OpenProcess(ProcessAccessFlags access, bool inheritHandle, int procId);
         [DllImport("kernel32.dll", SetLastError = true, EntryPoint = "ReadProcessMemory")]
         private static unsafe extern bool ReadProcessMemory(IntPtr hProcess, IntPtr lpBaseAddress, byte* lpBuffer, int dwSize, out int lpNumberOfBytesRead);
+        [DllImport("kernel32.dll", SetLastError = true, EntryPoint = "WriteProcessMemory")]
+        private static unsafe extern bool WriteProcessMemory(IntPtr hProcess, IntPtr lpBaseAddress, byte* lpBuffer, int dwSize, out int lpNumberOfBytesWritten);
 
         public static IntPtr GetProcessHandle(string processName)
         {
@@ -45,6 +47,16 @@ namespace CSMemory
             byte* buffer = stackalloc byte[size];
             ReadProcessMemory(process, address, buffer, size, out readBytes);
             return (T)Marshal.PtrToStructure((IntPtr)buffer, typeof(T));
+        }
+
+        public static unsafe bool Write<T>(IntPtr process, IntPtr address, T value)
+        {
+            int writtenBytes = 0;
+            int size = Marshal.SizeOf<T>();
+            byte* buffer = stackalloc byte[size];
+            IntPtr bufferAddress = (IntPtr)buffer;
+            Marshal.StructureToPtr(value, bufferAddress, false);
+            return WriteProcessMemory(process, address, (byte*)bufferAddress, size, out writtenBytes);
         }
     }
 }
