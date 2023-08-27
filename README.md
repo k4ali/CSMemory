@@ -22,7 +22,7 @@ value = CSMemory.Read<T>(IntPtr process, IntPtr address);
 - [✍️] Write memory
 ```csharp
 using CSMemory;
-bool value = CSMemory.Write<T>(IntPtr process, IntPtr address, T value);
+bool success = CSMemory.Write<T>(IntPtr process, IntPtr address, T value);
 ```
 
 [1]: https://learn.microsoft.com/en-us/visualstudio/ide/how-to-add-or-remove-references-by-using-the-reference-manager?view=vs-2022 "Project References"
